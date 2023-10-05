@@ -1,15 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/juliocnsouzadev/temporal-io-labs/internal/hello_world/workflow"
 	"go.temporal.io/sdk/client"
-	"go.temporal.io/sdk/worker"
 )
 
 func main() {
-	cfg := workflow.NewWorkflowConfig(workflow.HelloWorldWorkflow, "hello-world")
 
 	c, err := client.Dial(client.Options{})
 	if err != nil {
@@ -17,11 +16,10 @@ func main() {
 	}
 	defer c.Close()
 
-	w := worker.New(c, cfg.TaskQueue, worker.Options{})
-	w.RegisterWorkflow(cfg.Workflow)
-
-	err = w.Run(worker.InterruptCh())
-	if err != nil {
-		log.Fatalln("Unable to start worker", err)
+	for i := 0; i < 10; i++ {
+		id := fmt.Sprintf("hello-world-%d", i)
+		cfg := workflow.NewWorkflowConfig(workflow.HelloWorldWorkflow, "hello-world", id)
+		txt := fmt.Sprintf("Hello World %d", i)
+		workflow.Execute(c, cfg, txt)
 	}
 }
