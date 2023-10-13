@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/pborman/uuid"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/workflow"
@@ -45,11 +46,11 @@ func main() {
 	}
 
 	for _, line := range lines {
-		time.Now().UnixMilli()
-		id := fmt.Sprintf("cw-%d", time.Now().UnixMilli())
+		milli := time.Now().UnixMilli()
+		id := fmt.Sprintf("cw-%d", milli)
 		textSize := workflow.WorkflowMetadata{
 			Key:   "textSize",
-			Value: string(len(line)),
+			Value: strconv.Itoa(len(line)),
 		}
 		cfg := workflow.NewWorkflowConfig(workflow.CountWords, workflow.CountWordsTaskQueue, id, correlationId, textSize)
 		workflow.Execute(c, cfg, line)
