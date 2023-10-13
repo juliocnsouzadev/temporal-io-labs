@@ -9,15 +9,16 @@ import (
 
 func Execute(c client.Client, config *WorkflowConfig, args ...interface{}) {
 	options := client.StartWorkflowOptions{
-		ID:        config.ID,
-		TaskQueue: config.TaskQueue,
+		ID:               config.ID,
+		TaskQueue:        config.TaskQueue,
+		SearchAttributes: config.Metadata,
 	}
 
 	we, err := c.ExecuteWorkflow(context.Background(), options, config.Workflow, args...)
 	if err != nil {
 		log.Fatalln("Unable to execute workflow", err)
 	}
-	log.Println("Started workflow", "WorkflowID", we.GetID(), "RunID", we.GetRunID())
+	log.Println("Started workflow", "WorkflowID", we.GetID(), "RunID", we.GetRunID(), "CorrelationId", options.SearchAttributes["correlationId"])
 
 	var result map[string]int
 	err = we.Get(context.Background(), &result)
