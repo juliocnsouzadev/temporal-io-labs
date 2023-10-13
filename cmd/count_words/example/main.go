@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/pborman/uuid"
 	"log"
+	"time"
 
 	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/workflow"
 	"go.temporal.io/sdk/client"
@@ -37,10 +39,19 @@ func main() {
 	}
 	defer c.Close()
 
-	for i, line := range lines {
+	correlationId := workflow.WorkflowMetadata{
+		Key:   "correlationId",
+		Value: uuid.NewUUID().String(),
+	}
 
-		id := fmt.Sprintf("count-words-%d", i)
-		cfg := workflow.NewWorkflowConfig(workflow.CountWords, workflow.CountWordsTaskQueue, id)
+	for _, line := range lines {
+		time.Now().UnixMilli()
+		id := fmt.Sprintf("cw-%d", time.Now().UnixMilli())
+		textSize := workflow.WorkflowMetadata{
+			Key:   "textSize",
+			Value: string(len(line)),
+		}
+		cfg := workflow.NewWorkflowConfig(workflow.CountWords, workflow.CountWordsTaskQueue, id, correlationId, textSize)
 		workflow.Execute(c, cfg, line)
 	}
 
