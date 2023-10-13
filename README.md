@@ -22,7 +22,7 @@ Temporal provides a command-line interface (CLI), `tctl`, which allows you to in
 brew install tctl
 ```
 
-### Checking avaliable commands
+### Checking available commands
 ```bash
 tctl workflow --help
 ```
@@ -74,7 +74,7 @@ Example Output:
                                   WorkflowTaskCompletedEventId:4}
 ```
 
-## Activites
+## Activities
 
 In Temporal, you can use Activities to encapsulate business logic that is prone to failure. Unlike the Workflow Definition, there is no requirement for an Activity Definition to be deterministic.
 
