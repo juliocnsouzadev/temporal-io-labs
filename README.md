@@ -118,3 +118,37 @@ curl -X POST -F "file=@path_to_file" http://localhost:8080/upload
    - An input field labeled "Select Files" will appear on the right. Click on it and choose the file you want to upload from your computer.
 8. **Send the Request**: Click the blue `Send` button. Postman will make a POST request with the file attached.
 9. **Inspect the Response**: After sending, Postman will display the server's response in the lower half of the window. This can help you understand if the upload was successful or if there were any issues.
+
+## Custom Searchable Attributes
+
+You can add `searchable attributes` if your `Temporal Cluster` is using `ElasticSearch`. To achieve this you need:
+
+1. Add a map with the key (searchable field) and values (data you will be searching for in you workflows) to the StarWorkflowOptions.SearchAttributes
+```go
+    options := client.StartWorkflowOptions{
+		ID:                 "my-workflow-id",
+		TaskQueue:          "my-queue",
+		SearchAttributes:   map[string]interface{}{
+			                    "correlationId" : "my-correlationId",
+                            },
+	}
+
+	we, err := c.ExecuteWorkflow(context.Background(), options, config.Workflow, args...)
+	if err != nil {
+		log.Fatalln("Unable to execute workflow", err)
+	}
+	var result string
+	err = we.Get(context.Background(), &result)
+```
+2. You need to config the fields in your cluster using the cli
+```bash
+temporal operator search-attribute create -n default -name correlationId --type Keyword
+```
+   - if you don't config the searchable field in the cluster and error will be thrown when running the workflow or the worker
+
+### Searching for the new attribute in the UI demo
+[![Searching for the new attribute in the UI demo](./docs/media/searchable_attributes_ui.png)](./docs/media/searchable_attributes_ui.mov "Searching for the new attribute in the UI demo")
+
+**More information about Searchable fields and supported types on [Temporal Documentation](https://docs.temporal.io/visibility#custom-search-attributes)**
+
+A practical example in can be found this project [here](./internal/count_words)
