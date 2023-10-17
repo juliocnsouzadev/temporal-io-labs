@@ -22,8 +22,7 @@ func CountWords(ctx workflow.Context, text string) (*activity.Reduced, error) {
 	mappedText := &activity.Mapped{}
 	if val := ctx.Value(tracing.PropagateKey); val != nil {
 		mappedText.TracingValues = val.(tracing.Values)
-		dataInfo := fmt.Sprintf("%v", mappedText.TracingValues)
-		workflow.GetLogger(ctx).Debug("propagated data in mapping", dataInfo)
+		tracing.LogDebug(ctx, mappedText.TracingValues.Data...)
 	}
 
 	err := workflow.ExecuteActivity(ctx, activity.Map, text).Get(ctx, mappedText)
@@ -34,8 +33,7 @@ func CountWords(ctx workflow.Context, text string) (*activity.Reduced, error) {
 	reducedWords := &activity.Reduced{}
 	if val := ctx.Value(tracing.PropagateKey); val != nil {
 		reducedWords.TracingValues = val.(tracing.Values)
-		dataInfo := fmt.Sprintf("%v", reducedWords.TracingValues)
-		workflow.GetLogger(ctx).Debug("propagated data in reduce", dataInfo, len(reducedWords.TracingValues.Data))
+		tracing.LogDebug(ctx, reducedWords.TracingValues.Data...)
 	}
 	err = workflow.ExecuteActivity(ctx, activity.Reduce, mappedText).Get(ctx, reducedWords)
 	if err != nil {
