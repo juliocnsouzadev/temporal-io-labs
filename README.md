@@ -101,7 +101,7 @@ go run ./cmd/count_works/example/main.go
 
 **Upload the file with CURL**
 ```bash
-curl -X POST -F "file=@path_to_file" http://localhost:8080/upload
+curl -X POST -F "file=@path_to_file" http://localhost:8081/upload
 ```
 
 **Upload the file with Postman**
