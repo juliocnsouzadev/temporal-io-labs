@@ -2,13 +2,17 @@ package main
 
 import (
 	"fmt"
+	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
 	"github.com/pborman/uuid"
+	"go.temporal.io/sdk/contrib/opentracing"
+	"go.temporal.io/sdk/interceptor"
 	"log"
 	"strconv"
 	"time"
 
 	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/workflow"
 	"go.temporal.io/sdk/client"
+	temporalWorkflow "go.temporal.io/sdk/workflow"
 )
 
 var (
@@ -33,8 +37,21 @@ var (
 )
 
 func main() {
+	// Set tracer which will be returned by opentracing.GlobalTracer().
+	closer := tracing.SetJaegerGlobalTracer("word-count")
+	defer func() { _ = closer.Close() }()
 
-	c, err := client.Dial(client.Options{})
+	// Create interceptor
+	tracingInterceptor, err := opentracing.NewInterceptor(opentracing.TracerOptions{})
+	if err != nil {
+		log.Fatalf("Failed creating interceptor: %v", err)
+	}
+
+	c, err := client.Dial(client.Options{
+		HostPort:           client.DefaultHostPort,
+		Interceptors:       []interceptor.ClientInterceptor{tracingInterceptor},
+		ContextPropagators: []temporalWorkflow.ContextPropagator{tracing.NewContextPropagator()},
+	})
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
 	}

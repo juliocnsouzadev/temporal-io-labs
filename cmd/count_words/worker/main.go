@@ -1,25 +1,42 @@
 package main
 
 import (
+	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
 	prom "github.com/prometheus/client_golang/prometheus"
 	"github.com/uber-go/tally/v4"
 	"github.com/uber-go/tally/v4/prometheus"
+	"go.temporal.io/sdk/interceptor"
 	"log"
 	"time"
 
 	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/activity"
 	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/workflow"
 	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/contrib/opentracing"
 	sdktally "go.temporal.io/sdk/contrib/tally"
 	"go.temporal.io/sdk/worker"
+	temporalWorkflow "go.temporal.io/sdk/workflow"
 )
 
 func main() {
+
+	// Set tracer which will be returned by opentracing.GlobalTracer().
+	closer := tracing.SetJaegerGlobalTracer("word-count")
+	defer func() { _ = closer.Close() }()
+
+	// Create interceptor
+	tracingInterceptor, err := opentracing.NewInterceptor(opentracing.TracerOptions{})
+	if err != nil {
+		log.Fatalf("Failed creating interceptor: %v", err)
+	}
+
 	options := client.Options{
 		MetricsHandler: sdktally.NewMetricsHandler(newPrometheusScope(prometheus.Configuration{
 			ListenAddress: "0.0.0.0:9090",
 			TimerType:     "histogram",
 		})),
+		ContextPropagators: []temporalWorkflow.ContextPropagator{tracing.NewContextPropagator()},
+		Interceptors:       []interceptor.ClientInterceptor{tracingInterceptor},
 	}
 	c, err := client.Dial(options)
 	if err != nil {
@@ -27,7 +44,9 @@ func main() {
 	}
 	defer c.Close()
 
-	w := worker.New(c, workflow.CountWordsTaskQueue, worker.Options{})
+	w := worker.New(c, workflow.CountWordsTaskQueue, worker.Options{
+		EnableLoggingInReplay: true,
+	})
 
 	w.RegisterWorkflow(workflow.CountWords)
 	w.RegisterActivity(activity.Map)
