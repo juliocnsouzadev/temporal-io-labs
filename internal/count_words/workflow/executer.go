@@ -2,6 +2,8 @@ package workflow
 
 import (
 	"context"
+	"fmt"
+	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
 	"log"
 
 	"go.temporal.io/sdk/client"
@@ -11,7 +13,20 @@ func Execute(c client.Client, config *WorkflowConfig, args ...interface{}) {
 
 	options := buildOptions(config)
 
-	we, err := c.ExecuteWorkflow(context.Background(), options, config.Workflow, args...)
+	ctx := context.Background()
+
+	if options.SearchAttributes != nil {
+		values := &tracing.Values{}
+		for key, value := range options.SearchAttributes {
+			values.Data = append(
+				values.Data,
+				tracing.KeyValue{Key: key, Value: fmt.Sprintf("%v", value)},
+			)
+		}
+		ctx = context.WithValue(ctx, tracing.PropagateKey, values)
+	}
+
+	we, err := c.ExecuteWorkflow(ctx, options, config.Workflow, args...)
 	if err != nil {
 		log.Fatalln("Unable to execute workflow", err)
 	}
@@ -19,7 +34,7 @@ func Execute(c client.Client, config *WorkflowConfig, args ...interface{}) {
 	logWorkflowStart(we, options)
 
 	var result map[string]int
-	err = we.Get(context.Background(), &result)
+	err = we.Get(ctx, &result)
 	if err != nil {
 		log.Fatalln("Unable get workflow result", err)
 	}
