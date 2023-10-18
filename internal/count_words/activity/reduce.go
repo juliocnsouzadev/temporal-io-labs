@@ -3,6 +3,7 @@ package activity
 import (
 	"context"
 	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
+	"log"
 )
 
 type Reduced struct {
@@ -20,7 +21,11 @@ func Reduce(ctx context.Context, data *Mapped) (*Reduced, error) {
 		WordCount: wordCount,
 	}
 	if val := ctx.Value(tracing.PropagateKey); val != nil {
-		result.TracingValues = val.(tracing.Values)
+		if tracingValues, ok := val.(tracing.Values); ok {
+			result.TracingValues = tracingValues
+		} else {
+			log.Println("no propagate key found in context [reducing]")
+		}
 	}
 	return &result, nil
 }

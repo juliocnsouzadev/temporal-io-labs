@@ -8,7 +8,7 @@ import (
 	"github.com/uber/jaeger-client-go/config"
 )
 
-func SetJaegerGlobalTracer(serviceName string) io.Closer {
+func SetJaegerGlobalTracer(serviceName string) (io.Closer, error) {
 	cfg := config.Configuration{
 		ServiceName: serviceName,
 		Sampler: &config.SamplerConfig{
@@ -23,9 +23,9 @@ func SetJaegerGlobalTracer(serviceName string) io.Closer {
 		config.Logger(jaeger.StdLogger),
 	)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	opentracing.SetGlobalTracer(tracer)
 
-	return closer
+	return closer, nil
 }
