@@ -3,13 +3,13 @@ package tracing
 import (
 	"fmt"
 	"go.temporal.io/sdk/workflow"
+	"strings"
 )
 
 func LogDebug(ctx workflow.Context, data ...KeyValue) {
-	msg := "[ "
+	var msg strings.Builder
 	for _, d := range data {
-		msg += fmt.Sprintf("%v,", d)
+		msg.WriteString(fmt.Sprintf("%v ", d))
 	}
-	msg += " ]"
-	workflow.GetLogger(ctx).Debug(msg)
+	workflow.GetLogger(ctx).Debug(msg.String())
 }

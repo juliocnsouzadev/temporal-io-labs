@@ -38,8 +38,15 @@ var (
 
 func main() {
 	// Set tracer which will be returned by opentracing.GlobalTracer().
-	closer := tracing.SetJaegerGlobalTracer("word-count")
-	defer func() { _ = closer.Close() }()
+	closer, err := tracing.SetJaegerGlobalTracer("word-count")
+	if err != nil {
+		log.Fatalf("Failed creating tracer: %v", err)
+	}
+	defer func() {
+		if err := closer.Close(); err != nil {
+			log.Fatalf("Failed to close tracer: %v", err)
+		}
+	}()
 
 	// Create interceptor
 	tracingInterceptor, err := opentracing.NewInterceptor(opentracing.TracerOptions{})

@@ -42,6 +42,10 @@ func NewContextPropagator() workflow.ContextPropagator {
 // Inject injects values from context into headers for propagation
 func (s *propagator) Inject(ctx context.Context, writer workflow.HeaderWriter) error {
 	value := ctx.Value(PropagateKey)
+	return s.inject(value, writer)
+}
+
+func (s *propagator) inject(value any, writer workflow.HeaderWriter) error {
 	payload, err := converter.GetDefaultDataConverter().ToPayload(value)
 	if err != nil {
 		return err
@@ -53,12 +57,7 @@ func (s *propagator) Inject(ctx context.Context, writer workflow.HeaderWriter) e
 // InjectFromWorkflow injects values from context into headers for propagation
 func (s *propagator) InjectFromWorkflow(ctx workflow.Context, writer workflow.HeaderWriter) error {
 	value := ctx.Value(PropagateKey)
-	payload, err := converter.GetDefaultDataConverter().ToPayload(value)
-	if err != nil {
-		return err
-	}
-	writer.Set(propagationKey, payload)
-	return nil
+	return s.inject(value, writer)
 }
 
 // Extract extracts values from headers and puts them into context
