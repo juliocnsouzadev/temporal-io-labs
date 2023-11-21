@@ -2,8 +2,9 @@ package tracing
 
 import (
 	"fmt"
-	"go.temporal.io/sdk/workflow"
 	"strings"
+
+	"go.temporal.io/sdk/workflow"
 )
 
 func LogDebug(ctx workflow.Context, data ...KeyValue) {

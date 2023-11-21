@@ -151,4 +151,4 @@ temporal operator search-attribute create -n default -name correlationId --type 
 
 **More information about Searchable fields and supported types on [Temporal Documentation](https://docs.temporal.io/visibility#custom-search-attributes)**
 
-A practical example in can be found this project [here](./internal/count_words)
+A practical example in can be found this project [here](go/internal/count_words)

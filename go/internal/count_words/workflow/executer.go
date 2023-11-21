@@ -3,10 +3,11 @@ package workflow
 import (
 	"context"
 	"fmt"
-	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
 	"log"
 
 	"go.temporal.io/sdk/client"
+
+	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
 )
 
 func Execute(c client.Client, config *WorkflowConfig, args ...interface{}) {

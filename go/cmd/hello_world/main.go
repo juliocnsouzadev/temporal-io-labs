@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/juliocnsouzadev/temporal-io-labs/internal/hello_world/workflow"
 	"go.temporal.io/sdk/client"
+
+	"github.com/juliocnsouzadev/temporal-io-labs/internal/hello_world/workflow"
 )
 
 func main() {

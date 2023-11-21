@@ -2,9 +2,10 @@ package activity
 
 import (
 	"context"
-	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
 	"log"
 	"strings"
+
+	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
 )
 
 type Mapped struct {

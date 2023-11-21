@@ -2,11 +2,12 @@ package workflow
 
 import (
 	"fmt"
-	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
 	"time"
 
-	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/activity"
 	"go.temporal.io/sdk/workflow"
+
+	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/activity"
+	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
 )
 
 const (
