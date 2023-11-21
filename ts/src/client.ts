@@ -1,6 +1,7 @@
-import { Connection, Client } from '@temporalio/client';
+import {Connection, Client, SearchAttributes} from '@temporalio/client';
 import { countWords } from './workflows';
 import { nanoid } from 'nanoid';
+import {SearchAttributeValue} from "@temporalio/common/src/interfaces";
 
 const args = [
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -36,12 +37,16 @@ async function run() {
   });
 
   for (const arg of args) {
+    const searchable:SearchAttributes = {
+      "correlationId": [`correlationId-${nanoid()}`]
+    };
     const handle = await client.workflow.start(countWords, {
       taskQueue: 'count-words-ts-task-queue',
       args: [arg],
       workflowId: 'workflow-' + nanoid(),
+      searchAttributes: searchable,
     });
-    console.log(`Started workflow ${handle.workflowId}`);
+    console.log(`Started workflow ${handle.workflowId} with correlationId ${searchable.correlationId}`);
 
     console.log(await handle.result());
   }

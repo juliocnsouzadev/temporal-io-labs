@@ -23,15 +23,6 @@ async function run() {
       reduce,
     },
   });
-
-  // Step 3: Start accepting tasks on the `hello-world` queue
-  //
-  // The worker runs until it encounters an unexepected error or the process receives a shutdown signal registered on
-  // the SDK Runtime object.
-  //
-  // By default, worker logs are written via the Runtime logger to STDERR at INFO level.
-  //
-  // See https://typescript.temporal.io/api/classes/worker.Runtime#install to customize these defaults.
   await worker.run();
 }
 
