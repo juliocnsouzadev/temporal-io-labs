@@ -10,8 +10,14 @@ Temporal applications are built using an abstraction called Workflows. You'll de
 Temporal Workflows are resilient. They can run—and keeping running—for years, even if the underlying infrastructure fails. If the application itself crashes, Temporal will automatically recreate its pre-failure state so it can continue right where it left off.
 
 ## Install the SDK
+GO
 ```bash
 go get go.temporal.io/sdk
+```
+
+TypeScript
+```bash
+npm install @temporalio/client @temporalio/worker @temporalio/workflow @temporalio/activity @temporalio/common
 ```
 
 ## CLI
