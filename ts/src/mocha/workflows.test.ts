@@ -1,11 +1,12 @@
 import { TestWorkflowEnvironment } from '@temporalio/testing';
 import { before, describe, it } from 'mocha';
 import { Worker } from '@temporalio/worker';
-import { example } from '../workflows';
-import * as activities from '../activities';
+import { countWords } from '../workflows';
 import assert from 'assert';
+import {map} from "../activity/map";
+import {reduce, Reduced} from "../activity/reduce";
 
-describe('Example workflow', () => {
+describe('Count Words workflow', () => {
   let testEnv: TestWorkflowEnvironment;
 
   before(async () => {
@@ -24,16 +25,27 @@ describe('Example workflow', () => {
       connection: nativeConnection,
       taskQueue,
       workflowsPath: require.resolve('../workflows'),
-      activities,
+      activities: {
+        map,
+        reduce
+      },
     });
 
-    const result = await worker.runUntil(
-      client.workflow.execute(example, {
-        args: ['Temporal'],
+    const text = 'Temporal or Kafka that is the question in temporal or kafka';
+    const result:Reduced = await worker.runUntil(
+      client.workflow.execute(countWords, {
+        args: [text],
         workflowId: 'test',
         taskQueue,
       })
     );
-    assert.equal(result, 'Hello, Temporal!');
+    assert.equal(result.wordCounts['temporal'], 2);
+    assert.equal(result.wordCounts['or'], 2);
+    assert.equal(result.wordCounts['kafka'], 2);
+    assert.equal(result.wordCounts['that'], 1);
+    assert.equal(result.wordCounts['is'], 1);
+    assert.equal(result.wordCounts['the'], 1);
+    assert.equal(result.wordCounts['question'], 1);
+    assert.equal(result.wordCounts['in'], 1);
   });
 });
