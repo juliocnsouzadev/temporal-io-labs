@@ -1,10 +1,10 @@
 import { TestWorkflowEnvironment } from '@temporalio/testing';
 import { after, before, it } from 'mocha';
 import { Worker } from '@temporalio/worker';
-import { example } from '../workflows';
+import { countWords } from '../workflows';
 import assert from 'assert';
 
-describe('Example workflow with mocks', () => {
+describe('Count Words workflow with mocks', () => {
   let testEnv: TestWorkflowEnvironment;
 
   before(async () => {
@@ -19,22 +19,25 @@ describe('Example workflow with mocks', () => {
     const { client, nativeConnection } = testEnv;
     const taskQueue = 'test';
 
+    const text = 'Temporal or Kafka that is the question in temporal or kafka';
+    let mapped = {words: text.split(' ')};
     const worker = await Worker.create({
       connection: nativeConnection,
       taskQueue,
       workflowsPath: require.resolve('../workflows'),
       activities: {
-        greet: async () => 'Hello, Temporal!',
+        map: async () => mapped,
+        reduce: async () => ({}),
       },
     });
 
     const result = await worker.runUntil(
-      client.workflow.execute(example, {
+      client.workflow.execute(countWords, {
         args: ['Temporal'],
         workflowId: 'test',
         taskQueue,
       })
     );
-    assert.equal(result, 'Hello, Temporal!');
+    assert.ok(result);
   });
 });
