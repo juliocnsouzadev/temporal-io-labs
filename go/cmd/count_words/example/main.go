@@ -2,17 +2,19 @@ package main
 
 import (
 	"fmt"
-	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
-	"github.com/pborman/uuid"
-	"go.temporal.io/sdk/contrib/opentracing"
-	"go.temporal.io/sdk/interceptor"
 	"log"
 	"strconv"
 	"time"
 
-	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/workflow"
+	"github.com/google/uuid"
+	"go.temporal.io/sdk/contrib/opentracing"
+	"go.temporal.io/sdk/interceptor"
+
 	"go.temporal.io/sdk/client"
 	temporalWorkflow "go.temporal.io/sdk/workflow"
+
+	tracing2 "github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
+	workflow2 "github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/workflow"
 )
 
 var (
@@ -38,7 +40,7 @@ var (
 
 func main() {
 	// Set tracer which will be returned by opentracing.GlobalTracer().
-	closer, err := tracing.SetJaegerGlobalTracer("word-count")
+	closer, err := tracing2.SetJaegerGlobalTracer("word-count")
 	if err != nil {
 		log.Fatalf("Failed creating tracer: %v", err)
 	}
@@ -57,27 +59,28 @@ func main() {
 	c, err := client.Dial(client.Options{
 		HostPort:           client.DefaultHostPort,
 		Interceptors:       []interceptor.ClientInterceptor{tracingInterceptor},
-		ContextPropagators: []temporalWorkflow.ContextPropagator{tracing.NewContextPropagator()},
+		ContextPropagators: []temporalWorkflow.ContextPropagator{tracing2.NewContextPropagator()},
 	})
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
 	}
 	defer c.Close()
 
-	correlationId := workflow.WorkflowMetadata{
+	cId, _ := uuid.NewUUID()
+	correlationId := workflow2.WorkflowMetadata{
 		Key:   "correlationId",
-		Value: uuid.NewUUID().String(),
+		Value: cId.String(),
 	}
 
 	for _, line := range lines {
 		milli := time.Now().UnixMilli()
 		id := fmt.Sprintf("cw-%d", milli)
-		textSize := workflow.WorkflowMetadata{
+		textSize := workflow2.WorkflowMetadata{
 			Key:   "textSize",
 			Value: strconv.Itoa(len(line)),
 		}
-		cfg := workflow.NewWorkflowConfig(workflow.CountWords, workflow.CountWordsTaskQueue, id, correlationId, textSize)
-		workflow.Execute(c, cfg, line)
+		cfg := workflow2.NewWorkflowConfig(workflow2.CountWords, workflow2.CountWordsTaskQueue, id, correlationId, textSize)
+		workflow2.Execute(c, cfg, line)
 	}
 
 }

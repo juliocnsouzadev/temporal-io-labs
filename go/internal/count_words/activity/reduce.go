@@ -2,8 +2,9 @@ package activity
 
 import (
 	"context"
-	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
 	"log"
+
+	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
 )
 
 type Reduced struct {

@@ -6,8 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/workflow"
 	"go.temporal.io/sdk/client"
+
+	workflow2 "github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/workflow"
 )
 
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
@@ -43,8 +44,8 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	i := 1
 	for scanner.Scan() {
 		id := fmt.Sprintf("count-words-%d", i)
-		cfg := workflow.NewWorkflowConfig(workflow.CountWords, workflow.CountWordsTaskQueue, id)
-		workflow.Execute(c, cfg, scanner.Text())
+		cfg := workflow2.NewWorkflowConfig(workflow2.CountWords, workflow2.CountWordsTaskQueue, id)
+		workflow2.Execute(c, cfg, scanner.Text())
 		i++
 	}
 

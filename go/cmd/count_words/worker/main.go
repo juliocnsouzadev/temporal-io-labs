@@ -1,21 +1,23 @@
 package main
 
 import (
-	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
-	prom "github.com/prometheus/client_golang/prometheus"
-	"github.com/uber-go/tally/v4"
-	"github.com/uber-go/tally/v4/prometheus"
-	"go.temporal.io/sdk/interceptor"
 	"log"
 	"time"
 
-	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/activity"
-	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/workflow"
-	"go.temporal.io/sdk/client"
+	prom "github.com/prometheus/client_golang/prometheus"
+	"github.com/uber-go/tally/v4"
+	"github.com/uber-go/tally/v4/prometheus"
 	"go.temporal.io/sdk/contrib/opentracing"
+	"go.temporal.io/sdk/interceptor"
+
+	"go.temporal.io/sdk/client"
 	sdktally "go.temporal.io/sdk/contrib/tally"
 	"go.temporal.io/sdk/worker"
 	temporalWorkflow "go.temporal.io/sdk/workflow"
+
+	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/activity"
+	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
+	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/workflow"
 )
 
 func main() {

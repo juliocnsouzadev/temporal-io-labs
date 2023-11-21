@@ -4,12 +4,10 @@ go 1.21.1
 
 require (
 	github.com/opentracing/opentracing-go v1.2.0
-	github.com/pborman/uuid v1.2.1
 	github.com/prometheus/client_golang v1.11.0
 	github.com/uber-go/tally/v4 v4.1.1
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	go.temporal.io/sdk v1.24.0
-	go.temporal.io/sdk/contrib/opentracing v0.2.0
 	go.temporal.io/sdk/contrib/tally v0.2.0
 )
 
@@ -27,6 +25,7 @@ require (
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
+	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
@@ -38,6 +37,7 @@ require (
 	github.com/twmb/murmur3 v1.1.5 // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	go.temporal.io/api v1.21.0 // indirect
+	go.temporal.io/sdk/contrib/opentracing v0.2.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
