@@ -10,7 +10,7 @@ import (
 	"github.com/juliocnsouzadev/temporal-io-labs/internal/count_words/tracing"
 )
 
-func Execute(c client.Client, config *WorkflowConfig, args ...interface{}) {
+func Execute(c client.Client, config *WorkflowConfig, args ...interface{}) context.Context {
 
 	options := buildOptions(config)
 
@@ -34,11 +34,12 @@ func Execute(c client.Client, config *WorkflowConfig, args ...interface{}) {
 
 	logWorkflowStart(we, options)
 
-	var result map[string]int
-	err = we.Get(ctx, &result)
+	err = we.Get(ctx, nil)
 	if err != nil {
-		log.Fatalln("Unable get workflow result", err)
+		log.Fatalln("Unable to get workflow", err)
 	}
+
+	return ctx
 }
 
 func buildOptions(config *WorkflowConfig) client.StartWorkflowOptions {
