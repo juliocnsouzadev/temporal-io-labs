@@ -45,7 +45,7 @@ services:
       - ES_SEEDS=elasticsearch
       - ES_VERSION=v7
       - PROMETHEUS_ENDPOINT=0.0.0.0:8000 #expose a port for Prometheus
-    image: temporalio/auto-setup
+    image: temporalio/auto-setup:latest
     networks:
       - temporal-network
     ports:
@@ -72,7 +72,7 @@ services:
       - TEMPORAL_ADDRESS=temporal:7233
       - TEMPORAL_CORS_ORIGINS=http://localhost:3000
       - TEMPORAL_NOTIFY_ON_NEW_VERSION=false
-    image: temporalio/ui
+    image: temporalio/ui:latest
     networks:
       - temporal-network
     ports:
